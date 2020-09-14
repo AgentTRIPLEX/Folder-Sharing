@@ -63,4 +63,4 @@ def handle_client(connection, address):
 
     connection.close()
 
-server = network.Server(handle_client, 5555, 'localhost')
+server = network.Server(handle_client, 5555, socket.gethostbyname(''))

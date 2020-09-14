@@ -55,7 +55,7 @@ if get_code() != '':
     input('Press Enter To Continue')
 
     try:
-        client = network.Client(handle_message, 'localhost', 5555)
+        client = network.Client(handle_message, '172.104.169.112', 5555)
         client.send(['SHARE', [get_code(), get_folder_data()]])
     except:
         print('Server Is Offline')
