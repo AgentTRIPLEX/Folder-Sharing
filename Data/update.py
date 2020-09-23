@@ -7,7 +7,12 @@ def get_code():
     with open('code.txt', 'r') as w:
         return w.read().strip()
 
-def update_folder(data):
+def update_folder(data, folder=os.getcwd()):
+    original = os.getcwd()
+
+    if folder != original:
+        os.chdir(folder)
+
     for path, value in data:
         if value == None:
             os.mkdir(path)
@@ -21,6 +26,9 @@ def update_folder(data):
             except:
                 print('Folder Update Incomplete!')
 
+    if folder != original:
+        os.chdir(original)
+
 def handle_message(message):
     if message[0] == 'UPDATE':
         update_folder(message[1])
@@ -30,7 +38,7 @@ if not os.path.exists('code.txt'):
     with open('code.txt', 'w') as w:
         w.write('')
 
-if get_code() != '':
+if __name__ == '__main__' and get_code() != '':
     print('You Are Updating Your Folder!')
     input('Press Enter To Continue')
 

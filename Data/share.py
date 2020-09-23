@@ -21,10 +21,12 @@ def read_path(path):
     with open(path, 'rb') as w:
         return w.read()
 
-def connected_to_project(path):
-    return read_path(path).strip().startswith(b'# CONNECTED TO PROJECT FOLDER SHARING')
+def get_folder_data(path=os.getcwd()):
+    original = os.getcwd()
 
-def get_folder_data():
+    if path != original:
+        os.chdir(path)
+
     data = []
 
     for full_directory, _, files in os.walk(os.getcwd()):
@@ -33,12 +35,13 @@ def get_folder_data():
 
         for file in files:
             path = os.path.join(directory, file)
-
-            if path not in ['network.py', 'code.txt', '__pycache__'] and not connected_to_project(path):
-                data.append([path, read_path(path)])
+            data.append([path, read_path(path)])
 
         if path == None:
             data.append([directory, None])
+
+    if path != original:
+        os.chdir(original)
 
     return data
 
@@ -50,7 +53,7 @@ if not os.path.exists('code.txt'):
     with open('code.txt', 'w') as w:
         w.write('')
 
-if get_code() != '':
+if __name__ == '__main__' and get_code() != '':
     print('You Are Updating Your Server Data!')
     input('Press Enter To Continue')
 
