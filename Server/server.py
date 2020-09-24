@@ -41,7 +41,7 @@ def handle_client(connection, address):
                 except:
                     pass
 
-            print(f"[{address}] {message}")
+            print(f"[{address}] {message[0]}")
 
             if message[0] == "QUIT":
                 quit(connection, address)
@@ -49,13 +49,15 @@ def handle_client(connection, address):
 
             elif message[0] == 'SHARE':
                 servers[message[1][0]] = message[1][1]
-                server.send(message, connection)
+                server.send(['SHARED'], connection)
                 update_servers_json(servers)
+                print('[SERVER] Server Data Updated!')
 
             elif message[0] == 'UPDATE':
                 if message[1] not in servers:
                     servers[message[1]] = []
                 server.send(['UPDATE', servers[message[1]]], connection)
+                print('[SERVER] Server Data Sent!')
 
         except Exception as e:
             print('Error:', e)

@@ -7,17 +7,19 @@ import os
 import tkinter
 import tkinter.filedialog
 
-
 class App:
     def __init__(self):
         self.window = tkinter.Tk()
         self.window.title('Folder Sharing')
         self.window.resizable(0,0)
+        self.window.protocol('WM_DELETE_WINDOW', self.quit)
 
         try:
             self.client = network.Client(self.handle_message, '172.104.169.112', 5555)
         except:
             notification.notify(title='Server Offline', message="The Servers are Down! Please Try Again Later!", timeout=10)
+            self.window.destroy()
+            self.window.quit()
             return
 
         self.draw()
@@ -42,13 +44,13 @@ class App:
                 w.write(code)
 
             if os.path.exists(folder):
+                self.loading_panel()
+
                 if mode == 0:
                     self.client.send(['SHARE', [code, share.get_folder_data(folder)]])
                 else:
                     self.client.send(['UPDATE', code])
                     self.folder = folder
-
-                self.draw()
 
         self.reset_window()
         code_entry = tkinter.Entry(self.window, width=30, font=('Times New Roman', 20))
@@ -61,10 +63,24 @@ class App:
         else:
             code_entry.insert(0, share.get_code())
 
+    def loading_panel(self):
+        self.reset_window()
+        tkinter.Label(self.window, text='Loading...', font=('Helvetica', 50), width=20, height=3, bg='Black', fg='Gold').pack()
+
     def handle_message(self, message):
         if message[0] == 'UPDATE':
             update.update_folder(message[1], self.folder)
             self.folder = None
+            self.draw()
+
+        elif message[0] == 'SHARED':
+            self.draw()
+
+    def quit(self):
+        self.window.destroy()
+        self.client.send(['QUIT'])
+        self.client.close()
+        self.window.quit()
 
 if __name__ == '__main__':
     App()

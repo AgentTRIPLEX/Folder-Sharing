@@ -22,7 +22,7 @@ class Server():
         self.SOCKET.listen()
         print(f"[LISTENING] Server is listening on {self.HOST}\n")
 
-        while 1:
+        while self.run:
             try:
                 connection, address = self.SOCKET.accept()
             except:
@@ -69,7 +69,11 @@ class Client():
         data = b''
         while 1:
             while 1:
-                packet = self.SOCKET.recv(4096)
+                try:
+                    packet = self.SOCKET.recv(4096)
+                except:
+                    message = ''
+                    break
                 data += packet
                 try:
                     message = self.pickle.loads(data)
@@ -78,7 +82,10 @@ class Client():
                 except:
                     pass
 
-            self.handle_message(message)
+            if message != '':
+                self.handle_message(message)
+            else:
+                break
 
     def connect(self):
         if not self.CONNECTED:

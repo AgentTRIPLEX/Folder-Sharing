@@ -1,5 +1,3 @@
-# CONNECTED TO PROJECT FOLDER SHARING
-
 import os
 import network
 
@@ -48,18 +46,3 @@ def get_folder_data(path=os.getcwd()):
 def handle_message(message):
     if message[0] == 'SHARE':
         print('Folder Share Complete!')
-
-if not os.path.exists('code.txt'):
-    with open('code.txt', 'w') as w:
-        w.write('')
-
-if __name__ == '__main__' and get_code() != '':
-    print('You Are Updating Your Server Data!')
-    input('Press Enter To Continue')
-
-    try:
-        client = network.Client(handle_message, '172.104.169.112', 5555)
-        client.send(['SHARE', [get_code(), get_folder_data()]])
-    except:
-        print('Server Is Offline')
-        input('Press Enter To Exit!')
